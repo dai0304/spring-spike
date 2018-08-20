@@ -1,0 +1,84 @@
+buildscript {
+	repositories {
+		jcenter()
+		mavenCentral()
+		maven { url "https://plugins.gradle.org/m2/" }
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+	}
+}
+
+// basic plugins
+plugins {
+	id 'java'
+	id 'maven'
+	id 'maven-publish'
+	// https://stackoverflow.com/questions/37555196
+	// id "org.springframework.boot" version "2.1.2.RELEASE"
+	id "io.spring.dependency-management" version "1.0.6.RELEASE"
+}
+apply plugin: 'org.springframework.boot'
+
+// basic configuration
+group = "jp.xet.spike"
+ext.artifactId = "spring-spike"
+
+// custom plugins
+
+// custom configuration
+apply from: "${rootProject.projectDir}/gradle/version.gradle"
+apply from: "${rootProject.projectDir}/gradle/sourceArtifact.gradle"
+
+// compiler
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(AbstractCompile) each {
+	it.options.encoding = "UTF-8"
+}
+
+compileJava {
+	options.compilerArgs << "-Werror"
+	options.compilerArgs << "-Xlint:all" << "-Xlint:-processing" << "-Xlint:-deprecation"
+}
+
+// ======== libraries ========
+repositories {
+	jcenter()
+	mavenCentral()
+	maven { url 'https://dl.bintray.com/dai0304/maven' }
+	maven { url 'https://jitpack.io' }
+}
+
+configurations {
+	testImplementation.extendsFrom compileOnly
+}
+
+dependencies {
+	// spring
+	implementation "org.springframework.boot:spring-boot-starter"
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	
+	// aws
+	// implementation 'jp.xet.spring.aws:aws-client-spring-boot-configuration:1.0.0'
+	// implementation "com.amazonaws:aws-java-sdk-sts:$awsJavaSdkVersion"
+	
+	// others
+
+	// lombok
+	compile "org.projectlombok:lombok"
+	annotationProcessor "org.projectlombok:lombok"
+	testCompile "org.projectlombok:lombok"
+	testAnnotationProcessor "org.projectlombok:lombok"
+
+	// test
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+
+	// build
+}
+
+// ======== wrapper ========
+wrapper {
+	gradleVersion = '5.0'
+	distributionType = Wrapper.DistributionType.ALL
+}
