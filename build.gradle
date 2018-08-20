@@ -6,6 +6,10 @@ buildscript {
 	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+		classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$spotbugsPluginVersion"
+		classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotlessPluginVersion"
+		classpath "de.thetaphi:forbiddenapis:$forbiddenapisVersion"
+		classpath "de.aaschmid:gradle-cpd-plugin:1.0"
 	}
 }
 
@@ -19,16 +23,40 @@ plugins {
 	id "io.spring.dependency-management" version "1.0.6.RELEASE"
 }
 apply plugin: 'org.springframework.boot'
+apply plugin: 'com.github.spotbugs'
 
 // basic configuration
 group = "jp.xet.spike"
 ext.artifactId = "spring-spike"
 
 // custom plugins
+apply plugin: "checkstyle"
+apply plugin: "com.github.spotbugs"
+apply plugin: "pmd"
+apply plugin: "cpd"
+apply plugin: "jacoco"
+apply plugin: "de.thetaphi.forbiddenapis"
+apply plugin: "com.diffplug.gradle.spotless"
 
 // custom configuration
 apply from: "${rootProject.projectDir}/gradle/version.gradle"
 apply from: "${rootProject.projectDir}/gradle/sourceArtifact.gradle"
+
+apply from: "${rootProject.projectDir}/gradle/quality/checkstyle.gradle"
+apply from: "${rootProject.projectDir}/gradle/quality/spotbugs.gradle"
+apply from: "${rootProject.projectDir}/gradle/quality/pmd.gradle"
+apply from: "${rootProject.projectDir}/gradle/quality/cpd.gradle"
+apply from: "${rootProject.projectDir}/gradle/quality/jacoco.gradle"
+apply from: "${rootProject.projectDir}/gradle/quality/forbiddenapis.gradle"
+apply from: "${rootProject.projectDir}/gradle/quality/spotless.gradle"
+
+tasks.withType(com.github.spotbugs.SpotBugsTask) {
+	reports {
+		xml.enabled = false
+		html.enabled = true
+	}
+	pluginClasspath = project.configurations.spotbugsPlugins
+}
 
 // compiler
 sourceCompatibility = 1.8
@@ -75,6 +103,7 @@ dependencies {
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 
 	// build
+	spotbugsPlugins "com.h3xstream.findsecbugs:findsecbugs-plugin:$findsecbugsVersion"
 }
 
 // ======== wrapper ========
