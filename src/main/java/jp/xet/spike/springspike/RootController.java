@@ -29,14 +29,15 @@ import org.springframework.web.bind.annotation.RestController;
  * Root REST controller.
  */
 @Slf4j
-@RestController
+@Controller
 public class RootController {
 	
 	private static final Random RAND = new Random();
 	
 	@GetMapping("/")
-	public String index() {
+	public String index(Model model) {
 		log.info("Index");
-		return RAND.nextBoolean() ? "y" : "n";
+		model.addAttribute("greeting", "Miyamoto");
+		return RAND.nextBoolean() ? "index" : "index2";
 	}
 }

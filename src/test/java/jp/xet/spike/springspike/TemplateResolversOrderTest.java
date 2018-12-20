@@ -15,50 +15,45 @@
  */
 package jp.xet.spike.springspike;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Iterator;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-/**
- * Test for {@link RootController}.
-=======
 import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
+
+import jp.xet.spike.springspike.thymeleaf.AmazonS3TemplateResolver;
 
 /**
  * TODO miyamoto.daisuke.
- *
- * @author miyamoto.daisuke
- * @since #version#
->>>>>>> 9dab8fd... thymeleaf-s3
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class RootControllerTest {
+public class TemplateResolversOrderTest {
 	
 	@Autowired
-	WebApplicationContext wac;
-	
-	private MockMvc mockMvc;
-	
-	@Before
-	public void setUp() throws Exception {
-		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
-	}
+	SpringTemplateEngine engine;
 	
 	@Test
-	public void verifiesHomePageLoads() throws Exception {
-		mockMvc.perform(get("/"))
-				.andExpect(status().isOk());
+	public void verifyTemplateResolverOrder() {
+		Set<ITemplateResolver> templateResolvers = engine.getTemplateResolvers();
+		assertThat(templateResolvers).isNotNull().hasSize(2);
+		
+		Iterator<ITemplateResolver> iterator = templateResolvers.iterator();
+		ITemplateResolver s3Resolver = iterator.next();
+		assertThat(s3Resolver.getOrder()).isEqualTo(1);
+		assertThat(s3Resolver.getName()).isEqualTo(AmazonS3TemplateResolver.class.getName());
+		
+		ITemplateResolver springResolver = iterator.next();
+		assertThat(springResolver.getOrder()).isNull();
+		assertThat(springResolver.getName()).isEqualTo(SpringResourceTemplateResolver.class.getName()); 
 	}
 }
