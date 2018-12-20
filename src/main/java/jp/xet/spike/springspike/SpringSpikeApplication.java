@@ -15,11 +15,18 @@
  */
 package jp.xet.spike.springspike;
 
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.Transactional;
+
+import jp.xet.spike.springspike.model.Foobar;
+import jp.xet.spike.springspike.model.FoobarRepository;
 
 /**
  * Spike application.
@@ -30,9 +37,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @Slf4j
 @RequiredArgsConstructor
-public class SpringSpikeApplication {
+public class SpringSpikeApplication implements CommandLineRunner {
+	
+	private final FoobarRepository repo;
+	
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SpringSpikeApplication.class, args);
+	}
+	
+	@Override
+	@Transactional
+	public void run(String... args) throws Exception {
+		repo.create(Foobar.builder()
+			.foobarCode(UUID.randomUUID().toString())
+			.foobarName("name1")
+			.build());
 	}
 }

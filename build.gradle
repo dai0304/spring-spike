@@ -47,6 +47,8 @@ repositories {
 	jcenter()
 	mavenCentral()
 	maven { url 'https://dl.bintray.com/dai0304/maven' }
+	maven { url "https://dl.bintray.com/dai0304/spar-wings" } // for spar-wings
+	maven { url "http://maven.xet.jp/release" } // for spring-data-mirage
 	maven { url 'https://jitpack.io' }
 }
 
@@ -57,6 +59,7 @@ configurations {
 dependencies {
 	// spring
 	implementation "org.springframework.boot:spring-boot-starter"
+	implementation "org.springframework.boot:spring-boot-starter-jdbc"
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
 	// aws
@@ -64,6 +67,10 @@ dependencies {
 	// implementation "com.amazonaws:aws-java-sdk-sts:$awsJavaSdkVersion"
 
 	// others
+	implementation "jp.xet.springframework.data.mirage:spring-data-mirage:$springDataMirageVersion"
+	implementation "jp.xet.spar-wings:spar-wings-spring-data-chunk:$sparWingsVersion"
+	implementation 'org.flywaydb:flyway-core'
+	implementation "mysql:mysql-connector-java"
 
 	// lombok
 	compile "org.projectlombok:lombok"
