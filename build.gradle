@@ -50,13 +50,10 @@ repositories {
 	maven { url 'https://jitpack.io' }
 }
 
-configurations {
-	testImplementation.extendsFrom compileOnly
-}
-
 dependencies {
 	// spring
 	implementation "org.springframework.boot:spring-boot-starter"
+	implementation "org.springframework.boot:spring-boot-starter-web"
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
 	// aws

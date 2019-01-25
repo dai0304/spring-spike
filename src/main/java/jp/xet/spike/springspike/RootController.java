@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 the original author or authors.
+ * Copyright 2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,28 @@
  */
 package jp.xet.spike.springspike;
 
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Test for {@link SpringSpikeApplication}.
+ * Root REST controller.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class SpringSpikeApplicationTests {
+@Slf4j
+@RestController
+public class RootController {
 	
-	@Test
-	public void contextLoads() {
-		// nothing to do
+	private static final Random RAND = new Random();
+	
+	@GetMapping("/")
+	public String index() {
+		log.info("Index");
+		return RAND.nextBoolean() ? "y" : "n";
 	}
 }
