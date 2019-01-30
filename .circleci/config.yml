@@ -23,7 +23,7 @@ jobs:
           command: ./gradlew -v
       - run:
           name: Run tests
-          command: ./gradlew -is check jacocoTestReport
+          command: ./gradlew -is check
       - store_artifacts:
           name: Store artifacts
           path: build/reports
