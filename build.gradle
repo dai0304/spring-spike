@@ -5,6 +5,7 @@ buildscript {
 		maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
+		classpath "jp.classmethod.aws:gradle-aws-plugin:0.35"
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
 	}
 }
@@ -25,6 +26,7 @@ group = "jp.xet.spike"
 ext.artifactId = "spring-spike"
 
 // custom plugins
+apply plugin: "jp.classmethod.aws.beanstalk"
 
 // custom configuration
 apply from: "${rootProject.projectDir}/gradle/version.gradle"
@@ -73,6 +75,42 @@ dependencies {
 
 	// build
 }
+
+// ======== beanstalk bundle ========
+task createDockerfile(type: Copy, dependsOn: jar) {
+	from "src/main/bundle/Dockerfile"
+	into "build/bundle"
+	expand(jarFilename: jar.archiveName, artifactId: project.artifactId)
+}
+
+task createBundleResources(type: Copy, dependsOn: bootJar) {
+	from "src/main/bundle"
+	from jar.archivePath
+	into "build/bundle"
+	exclude "src/main/bundle/Dockerfile"
+}
+
+task createBundle(type: Zip, dependsOn: [createDockerfile, createBundleResources]) {
+	archiveName = jar.archiveName.substring(0, jar.archiveName.length() - 4) + ".zip"
+	from "build/bundle"
+}
+
+aws {
+	region = "ap-northeast-1"
+}
+
+task uploadBundle(type: jp.classmethod.aws.gradle.elasticbeanstalk.AWSElasticBeanstalkUploadBundleTask, dependsOn: createBundle) {
+	file project.createBundle.archivePath
+	overwrite project.version.endsWith("-SNAPSHOT")
+}
+
+task awsEbCreateVersion(type: jp.classmethod.aws.gradle.elasticbeanstalk.AWSElasticBeanstalkCreateApplicationVersionTask, dependsOn: uploadBundle) {
+	appName = ext.artifactId
+	conventionMapping.bucketName = { uploadBundle.bucketName }
+	conventionMapping.key = { uploadBundle.key }
+	conventionMapping.versionLabel = { uploadBundle.versionLabel }
+}
+
 
 // ======== wrapper ========
 wrapper {
