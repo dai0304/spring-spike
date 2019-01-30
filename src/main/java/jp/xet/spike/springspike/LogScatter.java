@@ -45,7 +45,7 @@ public class LogScatter implements CommandLineRunner {
 	}
 	
 	private void sleep(long v) {
-		if (v % 2 == 0) {
+		if (v % 5 == 0) {
 		try {
 			Thread.sleep(1);
 		} catch (InterruptedException e) {

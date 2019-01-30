@@ -105,7 +105,7 @@ task uploadBundle(type: jp.classmethod.aws.gradle.elasticbeanstalk.AWSElasticBea
 }
 
 task awsEbCreateVersion(type: jp.classmethod.aws.gradle.elasticbeanstalk.AWSElasticBeanstalkCreateApplicationVersionTask, dependsOn: uploadBundle) {
-	appName = ext.artifactId
+	appName = "log-scatter"
 	conventionMapping.bucketName = { uploadBundle.bucketName }
 	conventionMapping.key = { uploadBundle.key }
 	conventionMapping.versionLabel = { uploadBundle.versionLabel }
