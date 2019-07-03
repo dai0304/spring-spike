@@ -58,11 +58,11 @@ dependencies {
 	// spring
 	implementation "org.springframework.boot:spring-boot-starter"
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-	
+
 	// aws
 	// implementation 'jp.xet.spring.aws:aws-client-spring-boot-configuration:1.0.0'
 	// implementation "com.amazonaws:aws-java-sdk-sts:$awsJavaSdkVersion"
-	
+
 	// others
 
 	// lombok
@@ -79,6 +79,6 @@ dependencies {
 
 // ======== wrapper ========
 wrapper {
-	gradleVersion = '5.0'
+	gradleVersion = '5.5'
 	distributionType = Wrapper.DistributionType.ALL
 }
